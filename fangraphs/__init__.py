@@ -23,6 +23,17 @@ def get_soup(html: str) -> bs4.BeautifulSoup:
     return bs4.BeautifulSoup(html, features="lxml")
 
 
+class _Scraper:
+    """
+
+    """
+    _address: str = None
+
+    def __init__(self):
+        if self._address is None:
+            raise NotImplementedError
+
+
 class SyncScraper:
     """
 
@@ -33,6 +44,7 @@ class SyncScraper:
         if self._address is None:
             raise NotImplementedError
 
+    def __enter__(self):
         self.__play = sync_playwright().start()
         self.__browser = self.__play.chromium.launch()
         self.page = self.__browser.new_page(
@@ -42,9 +54,8 @@ class SyncScraper:
 
         self.soup = get_soup(self.page.content())
 
-    def __del__(self):
-        self.__browser.close()
-        self.__play.stop()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
 
 class AsyncScraper:
@@ -57,6 +68,7 @@ class AsyncScraper:
         if self._address is None:
             raise NotImplementedError
 
+    async def __aenter__(self):
         self.__play = await async_playwright().start()
         self.__browser = await self.__play.chromium.launch()
         self.page = await self.__browser.new_page(
@@ -66,6 +78,5 @@ class AsyncScraper:
 
         self.soup = get_soup(await self.page.content())
 
-    def __del__(self):
-        self.__browser.close()
-        self.__play.stop()
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        pass
