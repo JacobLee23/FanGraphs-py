@@ -55,6 +55,7 @@ class FilterWidget:
         :type page: playwright.async_api._generated.Page
         :param option:
         """
+        raise NotImplementedError
 
 
 class Selection(FilterWidget):
@@ -106,6 +107,9 @@ class Selection(FilterWidget):
         current = ""
 
         if isinstance(self.root, str):
+            if self.descendant:
+                _ = self.options()
+
             root_elem = self.soup.select_one(self.root)
 
             if self.descendant == self._descendants[0]:
@@ -490,3 +494,68 @@ class Switch(FilterWidget):
         """
         if option is not (await self.acurrent(page)):
             await page.click(self.root)
+
+
+class Selectors:
+    """
+
+    """
+    widget_types = {
+        "selections": Selection,
+        "dropdowns": Dropdown,
+        "checkboxes": Checkbox,
+        "switches": Switch
+    }
+
+    filter_widgets: dict[str, dict]
+
+    def __init__(self, soup: bs4.BeautifulSoup):
+        """
+        :param soup:
+        """
+        self.soup = soup
+
+        for wname, wclass in self.widget_types.items():
+            if (d := self.filter_widgets.get(wname)) is not None:
+                for attr, kwargs in d.items():
+                    self.__setattr__(attr, wclass(self.soup, **kwargs))
+
+        self.widgets = self.compile_widgets()
+
+    def compile_widgets(self) -> dict[str, Any]:
+        """
+
+        :return:
+        """
+        widgets = {}
+        for wtype in list(self.widget_types):
+            if (wnames := self.filter_widgets.get(wtype)) is not None:
+                logger.debug("Processing filter widget type: %s", wtype)
+                for name in wnames:
+                    wclass = self.__dict__.get(name)
+                    widgets.update({name: wclass})
+                    logger.debug("Processed filter widget: %s (%s)", name, wclass)
+
+        return widgets
+
+    def configure(self, page, **kwargs) -> None:
+        """
+
+        :type page: playwright.sync_api._generated.Page
+        :param kwargs:
+        """
+        for wname, option in kwargs.items():
+            logger.debug("Configure '%s' to '%s'", wname, option)
+            widget = self.widgets.get(wname)
+            widget.configure(page, option)
+
+    async def aconfigure(self, page, **kwargs) -> None:
+        """
+
+        :type page: playwright.async_api._generated.Page
+        :param kwargs:
+        """
+        for wname, option in kwargs.items():
+            logger.debug("Configure '%s' to '%s'", wname, option)
+            widget = self.widgets.get(wname)
+            await widget.aconfigure(page, option)
