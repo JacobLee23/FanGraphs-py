@@ -6,23 +6,16 @@
 """
 
 import json
-from typing import Any, Optional, Union
+import os
+from typing import Any, NamedTuple, Optional, Union
 
 import bs4
+import pandas as pd
 from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright
 
 from . import logger
 from . import selectors
-
-
-def get_soup(html: str) -> bs4.BeautifulSoup:
-    """
-
-    :param html:
-    :return:
-    """
-    return bs4.BeautifulSoup(html, features="lxml")
 
 
 class FanGraphsPage:
@@ -34,44 +27,163 @@ class FanGraphsPage:
 
     export_data_css: str = ""
 
-    _widget_types = {
+    _query_types = {
         "selections": selectors.Selection,
         "dropdowns": selectors.Dropdown,
         "checkboxes": selectors.Checkbox,
         "switches": selectors.Switch
     }
 
+    class TableData(NamedTuple):
+        """
+
+        """
+        dataframe: pd.DataFrame
+        row_elems: bs4.ResultSet
+        header_elems: bs4.ResultSet
+
     def __init__(self, html: str):
         """
         :param html:
         """
+        self.soup = self.load_soup(html)
+        self.filter_queries = self.load_filter_queries()
+
+        for qname, qclass in self._query_types.items():
+            if (qdict := self.filter_queries.get(qname)) is not None:
+                for attr, kwargs in qdict.items():
+                    self.__setattr__(attr, qclass(self.soup, **kwargs))
+
+        self.queries = self.compile_queries()
+
+    @staticmethod
+    def load_soup(html: str) -> bs4.BeautifulSoup:
+        """
+
+        :param html:
+        :return:
+        """
+        return bs4.BeautifulSoup(html, features="lxml")
+
+    def load_filter_queries(self) -> dict:
+        """
+
+        :return:
+        """
         with open(self.path, "r", encoding="utf-8") as file:
-            self.filter_widgets = json.load(file)
+            return json.load(file)
 
-        self.soup = get_soup(html)
-
-        for wname, wclass in self._widget_types.items():
-            if (wdict := self.filter_widgets.get(wname)) is not None:
-                for attr, kwargs in wdict.items():
-                    self.__setattr__(attr, wclass(self.soup, **kwargs))
-
-        self.widgets = self._compile_widgets()
-
-    def _compile_widgets(self) -> dict[str, Any]:
+    def compile_queries(self) -> dict[str, Any]:
         """
 
         """
-        widgets = {}
+        queries = {}
 
-        for wtype in list(self._widget_types):
-            if (wnames := self.filter_widgets.get(wtype)) is not None:
-                logger.debug("Processing filter widget type: %s", wtype)
-                for name in wnames:
-                    wclass = self.__dict__.get(name)
-                    widgets.update({name: wclass})
-                    logger.debug("Processed filter widget: %s (%s)", name, wclass)
+        for qtype in list(self._query_types):
+            if (qnames := self.filter_queries.get(qtype)) is not None:
+                logger.debug("Processing filter widget type: %s", qtype)
+                for name in qnames:
+                    qclass = self.__dict__.get(name)
+                    queries.update({name: qclass})
+                    logger.debug("Processed filter widget: %s (%s)", name, qclass)
 
-        return widgets
+        return queries
+
+    @staticmethod
+    def close_banner_ad(page) -> None:
+        """
+
+        :type page: playwright.sync_api._generated.Page
+        """
+        if page.query_selector_all("#ezmob-wrapper > div[style='display: none;']"):
+            return
+
+        elem = page.query_selector(".ezmob-footer-close")
+        if elem:
+            elem.click()
+
+    @staticmethod
+    async def aclose_banner_ad(page) -> None:
+        """
+
+        :type page: playwright.async_api._generated.Page
+        """
+        if await page.query_selector_all("#ezmob-wrapper > div[style='display: none;']"):
+            return
+
+        elem = await page.query_selector(".ezmob-footer-close")
+        if elem:
+            await elem.click()
+
+    def export_data(self, page) -> pd.DataFrame:
+        """
+
+        :type page: playwright.sync_api._generated.Page
+        :return:
+        """
+        self.close_banner_ad(page)
+        with page.expect_download() as down_info:
+            page.click(self.export_data_css)
+
+        download = down_info.value
+        download_path = download.path()
+        dataframe = pd.read_csv(download_path)
+        os.remove(download_path)
+
+        return dataframe
+
+    async def aexport_data(self, page) -> pd.DataFrame:
+        """
+
+        :type page: playwright.async_api._generated.Page
+        :return:
+        """
+        await self.aclose_banner_ad(page)
+        async with page.expect_download() as down_info:
+            await page.click(self.export_data_css)
+
+        download = await down_info.value
+        download_path = await download.path()
+        dataframe = pd.read_csv(download_path)
+        os.remove(download_path)
+
+        return dataframe
+
+    def data(self, page) -> Any:
+        """
+
+        :type page: playwright.sync_api._generated.Page
+        :return:
+        """
+        return self.export_data(page)
+
+    async def adata(self, page) -> Any:
+        """
+
+        :type page: playwright.async_api._generated.Page
+        :return:
+        """
+        return await self.aexport_data(page)
+
+    def scrape_table(self, table: bs4.Tag, *, css_h: str = "thead > tr", css_r: str = "tbody > tr") -> TableData:
+        """
+
+        :param table:
+        :param css_h:
+        :param css_r:
+        :return:
+        """
+        header_elems = table.select_one(css_h).select("th")
+        row_elems = table.select(css_r)
+
+        dataframe = pd.DataFrame(
+            data=[[e.text for e in r.select("td")] for r in row_elems],
+            columns=[e.text for e in header_elems]
+        )
+
+        table_data = self.TableData(dataframe, row_elems, header_elems)
+
+        return table_data
 
 
 class SyncScraper:
@@ -82,7 +194,7 @@ class SyncScraper:
         """
         :param fgpage:
         """
-        self.fgpage, self._fgpage = None, fgpage
+        self._fgpage = fgpage
 
         self.__play, self.__browser, self.page = None, None, None
 
@@ -115,12 +227,12 @@ class SyncScraper:
         """
         return self.__exit__(None, None, None)
 
-    def widgets(self) -> tuple[str]:
+    def queries(self) -> tuple[str]:
         """
 
         :return:
         """
-        return tuple(self.fgpage.widgets)
+        return tuple(self.fgpage.queries)
 
     def options(self, wname: str) -> Optional[tuple[Union[str, bool]]]:
         """
@@ -128,7 +240,7 @@ class SyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.widgets.get(wname)
+        widget = self.fgpage.queries.get(wname)
         if widget is not None:
             return widget.options()
         raise Exception  # TODO: Define custom exception
@@ -139,9 +251,9 @@ class SyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.widgets.get(wname)
-        if widget is not None:
-            return widget.current(self.page)
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            return query.current(self.page)
         raise Exception  # TODO: Define custom exception
 
     def configure(self, wname: str, option: Union[str, bool]) -> None:
@@ -150,11 +262,18 @@ class SyncScraper:
         :param wname:
         :param option:
         """
-        widget = self.fgpage.widgets.get(wname)
-        if widget is not None:
-            widget.configure(self.page, option)
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            query.configure(self.page, option)
             return
         raise Exception  # TODO: Define custom exception
+
+    def data(self) -> Any:
+        """
+
+        :return:
+        """
+        return self.fgpage.data(self.page)
 
 
 class AsyncScraper:
@@ -165,7 +284,7 @@ class AsyncScraper:
         """
         :param fgpage:
         """
-        self.fgpage, self._fgpage = None, fgpage
+        self._fgpage = fgpage
 
         self.__play, self.__browser, self.page = None, None, None
 
@@ -198,12 +317,12 @@ class AsyncScraper:
         """
         return await self.__aexit__(None, None, None)
 
-    def widgets(self) -> tuple[bool]:
+    def queries(self) -> tuple[bool]:
         """
 
         :return:
         """
-        return tuple(self.fgpage.widgets)
+        return tuple(self.fgpage.queries)
 
     def options(self, wname: str) -> Optional[tuple[Union[str, bool]]]:
         """
@@ -211,9 +330,9 @@ class AsyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.widgets.get(wname)
-        if widget is not None:
-            return widget.options()
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            return query.options()
         raise Exception     # TODO: Define custom exception
 
     async def current(self, wname: str) -> Optional[Union[str, bool]]:
@@ -222,9 +341,9 @@ class AsyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.widgets.get(wname)
-        if widget is not None:
-            return await widget.acurrent(self.page)
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            return await query.acurrent(self.page)
         raise Exception     # TODO: Define custom exception
 
     async def configure(self, wname: str, option: Union[str, bool]) -> None:
@@ -233,8 +352,15 @@ class AsyncScraper:
         :param wname:
         :param option:
         """
-        widget = self.fgpage.widgets.get(wname)
-        if widget is not None:
-            await widget.aconfigure(self.page, option)
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            await query.aconfigure(self.page, option)
             return
         raise Exception     # TODO: Define custom exception
+
+    async def data(self) -> Any:
+        """
+
+        :return:
+        """
+        return await self.fgpage.adata(self.page)
