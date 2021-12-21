@@ -179,7 +179,7 @@ class Selection(FilterWidget):
         try:
             index = options.index(option)
         except ValueError as err:
-            raise Exception(option) from err        # TODO: Raise custom exception
+            raise Exception(option) from err        # TODO: Define custom exception
 
         if isinstance(self.root, str):
             root_elem = page.query_selector(self.root)
@@ -198,7 +198,7 @@ class Selection(FilterWidget):
         try:
             index = options.index(option)
         except ValueError as err:
-            raise Exception(option) from err        # TODO: Raise custom exception
+            raise Exception(option) from err        # TODO: Define custom exception
 
         if isinstance(self.root, str):
             root_elem = await page.query_selector(self.root)
@@ -232,9 +232,6 @@ class Dropdown(FilterWidget):
         self.dropdown, self.button = dropdown, button
         self.descendant = ""
 
-        self.options = ()
-        self.current, self.currents = "", ()
-
     def options(self) -> tuple[str]:
         """
 
@@ -255,7 +252,7 @@ class Dropdown(FilterWidget):
 
         return tuple(options)
 
-    def current(self, page) -> str:
+    def current(self, page) -> Union[str, tuple[str]]:
         """
 
         :type page: playwright.sync_api._generated.Page
@@ -269,12 +266,10 @@ class Dropdown(FilterWidget):
             if self.dropdown is not None:
                 option = root_elem.attrs.get("value")
             else:
-                options = [
+                option = tuple([
                     e.text for e in root_elem.select("ul > li")
                     if "highlight" in e.attrs.get("class")
-                ]
-                option = options[0]
-                self.currents = tuple(options)
+                ])
         elif self.descendant == self._descendants[1]:
             option = root_elem.select_one("span").text
         elif self.descendant == self._descendants[2]:
@@ -298,12 +293,10 @@ class Dropdown(FilterWidget):
             if self.dropdown is not None:
                 option = root_elem.attrs.get("value")
             else:
-                options = [
+                option = tuple([
                     e.text for e in root_elem.select("ul > li")
                     if "highlight" in e.attrs.get("class")
-                ]
-                option = options[0]
-                self.currents = tuple(options)
+                ])
         elif self.descendant == self._descendants[1]:
             option = root_elem.select_one("span").text
         elif self.descendant == self._descendants[2]:
@@ -319,12 +312,14 @@ class Dropdown(FilterWidget):
         :type page: playwright.sync_api._generated.Page
         :param option:
         """
+        options = [o.lower() for o in self.options()]
+
         if self.descendant in self._descendants[:3]:
-            options = [o.lower() for o in self.options]
+
             try:
                 index = options.index(option.lower())
             except ValueError as err:
-                raise Exception(option) from err        # TODO: Raise custom exception
+                raise Exception(option) from err        # TODO: Define custom exception
 
             page.click(self.root)
 
@@ -336,11 +331,11 @@ class Dropdown(FilterWidget):
                 page.click(self.button)
 
         elif self.descendant == self._descendants[3]:
-            for opt in self.options:
+            for opt in options:
                 if opt.lower() == option.lower():
                     page.select_option(self.root, label=opt)
                     return
-            raise Exception(option)
+            raise Exception(option)     # TODO: Define custom exception
 
     async def aconfigure(self, page, option: str) -> None:
         """
@@ -348,12 +343,14 @@ class Dropdown(FilterWidget):
         :type page: playwright.async_api._generated.Page
         :param option:
         """
+        options = self.options()
+
         if self.descendant in self._descendants[:3]:
-            options = [o.lower() for o in self.options]
+            options = [o.lower() for o in options]
             try:
                 index = options.index(option.lower())
             except ValueError as err:
-                raise Exception(option) from err        # TODO: Raise custom exception
+                raise Exception(option) from err        # TODO: Define custom exception
 
             await page.click(self.root)
 
@@ -365,11 +362,11 @@ class Dropdown(FilterWidget):
                 await page.click(self.button)
 
         elif self.descendant == self._descendants[3]:
-            for opt in self.options:
+            for opt in options:
                 if opt.lower() == option.lower():
                     await page.select_option(self.root, label=opt)
                     return
-            raise Exception(option)
+            raise Exception(option)     # TODO: Define custom exception
 
 
 class Checkbox(FilterWidget):
@@ -507,12 +504,11 @@ class Selectors:
         "switches": Switch
     }
 
-    filter_widgets: dict[str, dict]
-
-    def __init__(self, soup: bs4.BeautifulSoup):
+    def __init__(self, filter_widgets: dict[str, dict], soup: bs4.BeautifulSoup):
         """
         :param soup:
         """
+        self.filter_widgets = filter_widgets
         self.soup = soup
 
         for wname, wclass in self.widget_types.items():
@@ -537,25 +533,3 @@ class Selectors:
                     logger.debug("Processed filter widget: %s (%s)", name, wclass)
 
         return widgets
-
-    def configure(self, page, **kwargs) -> None:
-        """
-
-        :type page: playwright.sync_api._generated.Page
-        :param kwargs:
-        """
-        for wname, option in kwargs.items():
-            logger.debug("Configure '%s' to '%s'", wname, option)
-            widget = self.widgets.get(wname)
-            widget.configure(page, option)
-
-    async def aconfigure(self, page, **kwargs) -> None:
-        """
-
-        :type page: playwright.async_api._generated.Page
-        :param kwargs:
-        """
-        for wname, option in kwargs.items():
-            logger.debug("Configure '%s' to '%s'", wname, option)
-            widget = self.widgets.get(wname)
-            await widget.aconfigure(page, option)
