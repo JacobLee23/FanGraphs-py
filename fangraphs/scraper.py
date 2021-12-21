@@ -55,17 +55,6 @@ class FanGraphsPage:
         self.selectors = Selectors(self.filter_widgets, self.soup)
 
 
-class _Scraper:
-    """
-
-    """
-    _address: str = None
-
-    def __init__(self):
-        if self._address is None:
-            raise NotImplementedError
-
-
 class SyncScraper:
     """
 
@@ -75,6 +64,8 @@ class SyncScraper:
         :param fgpage:
         """
         self.fgpage = fgpage
+
+        self.__play, self.__browser, self.page = None, None, None
 
     def __enter__(self):
         self.__play = sync_playwright().start()
@@ -157,6 +148,8 @@ class AsyncScraper:
         :param fgpage:
         """
         self.fgpage = fgpage
+
+        self.__play, self.__browser, self.page = None, None, None
 
     async def __aenter__(self):
         self.__play = await async_playwright().start()

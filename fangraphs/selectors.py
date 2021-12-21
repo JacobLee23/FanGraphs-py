@@ -266,10 +266,10 @@ class Dropdown(FilterWidget):
             if self.dropdown is not None:
                 option = root_elem.attrs.get("value")
             else:
-                option = tuple([
+                option = tuple(
                     e.text for e in root_elem.select("ul > li")
                     if "highlight" in e.attrs.get("class")
-                ])
+                )
         elif self.descendant == self._descendants[1]:
             option = root_elem.select_one("span").text
         elif self.descendant == self._descendants[2]:
@@ -293,10 +293,10 @@ class Dropdown(FilterWidget):
             if self.dropdown is not None:
                 option = root_elem.attrs.get("value")
             else:
-                option = tuple([
+                option = tuple(
                     e.text for e in root_elem.select("ul > li")
                     if "highlight" in e.attrs.get("class")
-                ])
+                )
         elif self.descendant == self._descendants[1]:
             option = root_elem.select_one("span").text
         elif self.descendant == self._descendants[2]:
@@ -426,7 +426,7 @@ class Checkbox(FilterWidget):
         :type page: playwright.async_api._generated.Page
         :param option:
         """
-        if option is not (await self.acurrent(page)):
+        if option is not await self.acurrent(page):
             await page.click(self.root)
 
 
@@ -489,7 +489,7 @@ class Switch(FilterWidget):
         :type page: playwright.async_api._generated.Page
         :param option:
         """
-        if option is not (await self.acurrent(page)):
+        if option is not await self.acurrent(page):
             await page.click(self.root)
 
 

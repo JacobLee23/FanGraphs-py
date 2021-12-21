@@ -14,7 +14,7 @@ import yaml
 
 CONF_PATH = os.path.join("fangraphs", "logger", "config.yaml")
 
-with open(CONF_PATH, "r") as file:
+with open(CONF_PATH, "r", encoding="utf-8") as file:
     dictConfig(
         yaml.safe_load(file.read())
     )
