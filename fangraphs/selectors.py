@@ -9,8 +9,6 @@ from typing import *
 
 import bs4
 
-from .logger import logger
-
 
 class FilterWidget:
     """
@@ -492,44 +490,3 @@ class Switch(FilterWidget):
         if option is not await self.acurrent(page):
             await page.click(self.root)
 
-
-class Selectors:
-    """
-
-    """
-    widget_types = {
-        "selections": Selection,
-        "dropdowns": Dropdown,
-        "checkboxes": Checkbox,
-        "switches": Switch
-    }
-
-    def __init__(self, filter_widgets: dict[str, dict], soup: bs4.BeautifulSoup):
-        """
-        :param soup:
-        """
-        self.filter_widgets = filter_widgets
-        self.soup = soup
-
-        for wname, wclass in self.widget_types.items():
-            if (d := self.filter_widgets.get(wname)) is not None:
-                for attr, kwargs in d.items():
-                    self.__setattr__(attr, wclass(self.soup, **kwargs))
-
-        self.widgets = self.compile_widgets()
-
-    def compile_widgets(self) -> dict[str, Any]:
-        """
-
-        :return:
-        """
-        widgets = {}
-        for wtype in list(self.widget_types):
-            if (wnames := self.filter_widgets.get(wtype)) is not None:
-                logger.debug("Processing filter widget type: %s", wtype)
-                for name in wnames:
-                    wclass = self.__dict__.get(name)
-                    widgets.update({name: wclass})
-                    logger.debug("Processed filter widget: %s (%s)", name, wclass)
-
-        return widgets

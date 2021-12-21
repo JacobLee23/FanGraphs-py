@@ -5,13 +5,15 @@
 
 """
 
-from typing import *
+import json
+from typing import Any, Optional, Union
 
 import bs4
 from playwright.async_api import async_playwright
 from playwright.sync_api import sync_playwright
 
-from .selectors import Selectors
+from . import logger
+from . import selectors
 
 
 def get_soup(html: str) -> bs4.BeautifulSoup:
@@ -28,42 +30,59 @@ class FanGraphsPage:
 
     """
     address: str
-
     path: str
-    filter_widgets: dict[str, dict]
 
-    export_data: str = ""
+    export_data_css: str = ""
 
-    def __init__(self):
-        self.soup = None
+    _widget_types = {
+        "selections": selectors.Selection,
+        "dropdowns": selectors.Dropdown,
+        "checkboxes": selectors.Checkbox,
+        "switches": selectors.Switch
+    }
 
-        self.selectors = None
-
-    def load_soup(self, html: str) -> None:
+    def __init__(self, html: str):
         """
-
         :param html:
         """
+        with open(self.path, "r", encoding="utf-8") as file:
+            self.filter_widgets = json.load(file)
+
         self.soup = get_soup(html)
 
-    def load_selectors(self) -> None:
+        for wname, wclass in self._widget_types.items():
+            if (wdict := self.filter_widgets.get(wname)) is not None:
+                for attr, kwargs in wdict.items():
+                    self.__setattr__(attr, wclass(self.soup, **kwargs))
+
+        self.widgets = self._compile_widgets()
+
+    def _compile_widgets(self) -> dict[str, Any]:
         """
 
         """
-        if self.soup is None:
-            raise NotImplementedError
-        self.selectors = Selectors(self.filter_widgets, self.soup)
+        widgets = {}
+
+        for wtype in list(self._widget_types):
+            if (wnames := self.filter_widgets.get(wtype)) is not None:
+                logger.debug("Processing filter widget type: %s", wtype)
+                for name in wnames:
+                    wclass = self.__dict__.get(name)
+                    widgets.update({name: wclass})
+                    logger.debug("Processed filter widget: %s (%s)", name, wclass)
+
+        return widgets
 
 
 class SyncScraper:
     """
 
     """
-    def __init__(self, fgpage: FanGraphsPage):
+    def __init__(self, fgpage):
         """
         :param fgpage:
         """
-        self.fgpage = fgpage
+        self.fgpage, self._fgpage = None, fgpage
 
         self.__play, self.__browser, self.page = None, None, None
 
@@ -73,11 +92,10 @@ class SyncScraper:
         self.page = self.__browser.new_page(
             accept_downloads=True
         )
-        self.page.goto(self.fgpage.address, timeout=0)
+        self.page.goto(self._fgpage.address, timeout=0)
 
         html = self.page.content()
-        self.fgpage.load_soup(html)
-        self.fgpage.load_selectors()
+        self.fgpage = self._fgpage(html)
 
         return self
 
@@ -102,7 +120,7 @@ class SyncScraper:
 
         :return:
         """
-        return tuple(self.fgpage.selectors.widgets)
+        return tuple(self.fgpage.widgets)
 
     def options(self, wname: str) -> Optional[tuple[Union[str, bool]]]:
         """
@@ -110,7 +128,7 @@ class SyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             return widget.options()
         raise Exception  # TODO: Define custom exception
@@ -121,7 +139,7 @@ class SyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             return widget.current(self.page)
         raise Exception  # TODO: Define custom exception
@@ -132,7 +150,7 @@ class SyncScraper:
         :param wname:
         :param option:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             widget.configure(self.page, option)
             return
@@ -143,11 +161,11 @@ class AsyncScraper:
     """
 
     """
-    def __init__(self, fgpage: FanGraphsPage):
+    def __init__(self, fgpage):
         """
         :param fgpage:
         """
-        self.fgpage = fgpage
+        self.fgpage, self._fgpage = None, fgpage
 
         self.__play, self.__browser, self.page = None, None, None
 
@@ -157,11 +175,10 @@ class AsyncScraper:
         self.page = await self.__browser.new_page(
             accept_downloads=True
         )
-        await self.page.goto(self.fgpage.address, timeout=0)
+        await self.page.goto(self._fgpage.address, timeout=0)
 
         html = await self.page.content()
-        self.fgpage.load_soup(html)
-        self.fgpage.load_selectors()
+        self.fgpage = self._fgpage(html)
 
         return self
 
@@ -186,7 +203,7 @@ class AsyncScraper:
 
         :return:
         """
-        return tuple(self.fgpage.selectors.widgets)
+        return tuple(self.fgpage.widgets)
 
     def options(self, wname: str) -> Optional[tuple[Union[str, bool]]]:
         """
@@ -194,7 +211,7 @@ class AsyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             return widget.options()
         raise Exception     # TODO: Define custom exception
@@ -205,7 +222,7 @@ class AsyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             return await widget.acurrent(self.page)
         raise Exception     # TODO: Define custom exception
@@ -216,7 +233,7 @@ class AsyncScraper:
         :param wname:
         :param option:
         """
-        widget = self.fgpage.selectors.widgets.get(wname)
+        widget = self.fgpage.widgets.get(wname)
         if widget is not None:
             await widget.aconfigure(self.page, option)
             return

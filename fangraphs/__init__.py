@@ -5,8 +5,6 @@
 
 """
 
+from .logger import logger
 from .scraper import AsyncScraper
 from .scraper import SyncScraper
-from .selectors import Selectors
-
-from .logger import logger
