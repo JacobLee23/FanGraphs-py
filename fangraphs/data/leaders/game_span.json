@@ -1,0 +1,34 @@
+{
+  "selections": {
+    "stat": {
+      "root": [
+        ".controls-stats > .fgButton:nth-child(1)",
+        ".controls-stats > .fgButton:nth-child(2)"
+      ]
+    },
+    "table": {
+      "root": [
+        ".controls-board-view > .fgButton:nth-child(1)",
+        ".controls-board-view > .fgButton:nth-child(2)",
+        ".controls-board-view > .fgButton:nth-child(3)"
+      ]
+    }
+  },
+  "dropdowns": {
+    "minimum": {
+      "root": ".controls-stats:nth-child(1) > div:nth-child(3) > .fg-selection-box__selection"
+    },
+    "single_season": {
+      "root": ".controls-stats:nth-child(2) > div:nth-child(1) > .fg-selection-box__selection"
+    },
+    "season1": {
+      "root": ".controls-stats:nth-child(2) > div:nth-child(2) > .fg-selection-box__selection"
+    },
+    "season2": {
+      "root": ".controls-stats:nth-child(2) > div:nth-child(3) > .fg-selection-box__selection"
+    },
+    "determine": {
+      "root": ".controls-stats.stat-determined > div:nth-child(1) > .fg-selection-box__selection"
+    }
+  }
+}
