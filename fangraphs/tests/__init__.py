@@ -38,7 +38,7 @@ class BaseTests:
 
     """
     @staticmethod
-    def _test_address(address: str) -> None:
+    def test_address(address: str) -> None:
         """
 
         :param address:
@@ -46,7 +46,7 @@ class BaseTests:
         assert urlopen(address).code == 200
 
     @staticmethod
-    def _test_path(path: str) -> None:
+    def test_path(path: str) -> None:
         """
 
         :param path:
@@ -54,7 +54,7 @@ class BaseTests:
         assert os.path.exists(path)
 
     @staticmethod
-    def _test_file_contents(path: str) -> None:
+    def test_file_contents(path: str) -> None:
         """
 
         :param path:
@@ -65,13 +65,25 @@ class BaseTests:
 
         assert isinstance(data, dict)
         assert all(k in QTYPES for k in data)
-        assert all(isinstance(v, dict) for v in data.values())
-        assert all(isinstance(v, dict) for k in data for v in data[k].values())
-        assert all(isinstance(v, (str, list)) for k in data for k_ in data[k] for v in data[k][k_].values())
-        assert all(isinstance(e, str) for k in data for k_ in data[k] for v in data[k][k_] for e in v if isinstance(v, list))
+        assert all(
+            isinstance(v, dict) for v in data.values()
+        )
+        assert all(
+            isinstance(v, dict)
+            for k in data for v in data[k].values()
+        )
+        assert all(
+            isinstance(v, (str, list))
+            for k in data for k_ in data[k] for v in data[k][k_].values()
+        )
+        assert all(
+            isinstance(e, str)
+            for k in data for k_ in data[k] for v in data[k][k_] for e in v
+            if isinstance(v, list)
+        )
 
     @staticmethod
-    def _test_selector(soup: bs4.BeautifulSoup, css: str) -> None:
+    def test_selector(soup: bs4.BeautifulSoup, css: str) -> None:
         """
 
         :param soup:
@@ -80,7 +92,7 @@ class BaseTests:
         assert len(soup.select(css)) == 1
 
     @staticmethod
-    def _test_selectors(soup: bs4.BeautifulSoup, css: list[str]) -> None:
+    def test_selectors(soup: bs4.BeautifulSoup, css: list[str]) -> None:
         """
 
         :param soup:

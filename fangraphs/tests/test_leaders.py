@@ -27,7 +27,7 @@ def test_address(cls) -> None:
 
     :param cls:
     """
-    BaseTests._test_address(cls.address)
+    BaseTests.test_address(cls.address)
 
 
 @pytest.mark.parametrize(
@@ -38,7 +38,7 @@ def test_path(cls) -> None:
 
     :param cls:
     """
-    BaseTests._test_path(cls.path)
+    BaseTests.test_path(cls.path)
 
 
 @pytest.mark.parametrize(
@@ -49,7 +49,7 @@ def test_file_contents(cls) -> None:
 
     :param cls:
     """
-    BaseTests._test_file_contents(cls.path)
+    BaseTests.test_file_contents(cls.path)
 
 
 @pytest.mark.parametrize(
@@ -66,6 +66,6 @@ def test_filter_queries(cls) -> None:
         for querydict in qtypedict.values():
             for css in querydict.values():
                 if isinstance(css, str):
-                    BaseTests._test_selector(soup, css)
+                    BaseTests.test_selector(soup, css)
                 else:
-                    BaseTests._test_selectors(soup, css)
+                    BaseTests.test_selectors(soup, css)
