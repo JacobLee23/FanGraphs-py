@@ -5,14 +5,9 @@
 
 """
 
-import inspect
 import json
 import os
-from typing import *
 from urllib.request import urlopen
-
-import bs4
-from playwright.sync_api import sync_playwright
 
 
 QTYPES = (
@@ -20,61 +15,34 @@ QTYPES = (
 )
 
 
-def get_classes(module) -> tuple[Any]:
+class Runner:
     """
-
-    :param module:
-    :return:
+    
     """
-    return tuple(
-        cls for name, cls in inspect.getmembers(module, inspect.isclass)
-        if name != "FanGraphsPage"
-    )
-
-
-class BaseTests:
-    """
-
-    """
-    @staticmethod
-    def get_soup(address: str) -> bs4.BeautifulSoup:
+    def __init__(self, fgpage):
         """
-
-        :param address:
-        :return:
+        :param fgpage:
         """
-        with sync_playwright() as play:
-            browser = play.chromium.launch()
-            page = browser.new_page()
-            page.goto(address, timeout=0)
-            soup = bs4.BeautifulSoup(page.content(), features="lxml")
-            browser.close()
-        return soup
+        self.fgpage = fgpage
 
-    @staticmethod
-    def test_address(address: str) -> None:
+    def test_address(self) -> None:
         """
-
-        :param address:
+        
         """
-        with urlopen(address) as res:
+        with urlopen(self.fgpage.address) as res:
             assert res.code == 200
+            
+    def test_path(self) -> None:
+        """
+        
+        """
+        assert os.path.exists(self.fgpage.path)
 
-    @staticmethod
-    def test_path(path: str) -> None:
+    def test_file_contents(self) -> None:
         """
 
-        :param path:
         """
-        assert os.path.exists(path)
-
-    @staticmethod
-    def test_file_contents(path: str) -> None:
-        """
-
-        :param path:
-        """
-        with open(path, "r", encoding="utf-8") as file:
+        with open(self.fgpage.path, "r", encoding="utf-8") as file:
             data = json.load(file)
         assert data
 
@@ -96,21 +64,3 @@ class BaseTests:
             for k in data for k_ in data[k] for v in data[k][k_] for e in v
             if isinstance(v, list)
         )
-
-    @staticmethod
-    def test_selector(soup: bs4.BeautifulSoup, css: str) -> None:
-        """
-
-        :param soup:
-        :param css:
-        """
-        assert len(soup.select(css)) == 1
-
-    @staticmethod
-    def test_selectors(soup: bs4.BeautifulSoup, css: list[str]) -> None:
-        """
-
-        :param soup:
-        :param css:
-        """
-        assert all(len(soup.select(c)) == 1 for c in css)
