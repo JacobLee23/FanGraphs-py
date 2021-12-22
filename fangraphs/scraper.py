@@ -168,7 +168,10 @@ class FanGraphsPage:
         """
         return await self.aexport_data(page)
 
-    def scrape_table(self, table: bs4.Tag, *, css_h: str = "thead > tr", css_r: str = "tbody > tr") -> TableData:
+    def scrape_table(
+            self, table: bs4.Tag,
+            *, css_h: str = "thead > tr", css_r: str = "tbody > tr"
+    ) -> TableData:
         """
 
         :param table:
