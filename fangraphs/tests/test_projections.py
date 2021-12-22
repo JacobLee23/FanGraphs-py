@@ -1,5 +1,5 @@
 #! usr/bin/env python
-# fangraphs/tests/test_leaders.py
+# fangraphs/tests/test_projections.py
 
 """
 
@@ -8,17 +8,12 @@
 import pytest
 
 from . import Runner
-from .. import leaders
+from .. import projections
 
 
 @pytest.mark.parametrize(
     "fgpage", (
-        leaders.GameSpan,
-        leaders.International,
-        leaders.MajorLeague,
-        leaders.SeasonStat,
-        leaders.Splits,
-        leaders.WAR
+        projections.Projections
     )
 )
 def test_scraper(fgpage) -> None:
@@ -30,3 +25,4 @@ def test_scraper(fgpage) -> None:
     test_runner.test_address()
     test_runner.test_path()
     test_runner.test_file_contents()
+
