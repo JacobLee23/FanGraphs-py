@@ -1,0 +1,26 @@
+{
+  "selections": {
+    "stat": {
+      "root": "#ProjectionBoard1_tsStats"
+    },
+    "position": {
+      "root": "#ProjectionBoard1_tsPosition"
+    },
+    "projection": {
+      "root": "#ProjectionBoard1_tsProj"
+    },
+    "update": {
+      "root": "#ProjectionBoard1_tsUpdate"
+    }
+  },
+  "dropdowns": {
+    "team": {
+      "root": "#ProjectionBoard1_rcbTeam_Input",
+      "dropdown": "#ProjectionBoard1_rcbTeam_DropDown"
+    },
+    "league": {
+      "root": "#ProjectionBoard1_rcbLeague_Input",
+      "dropdown": "#ProjectionBoard1_rcbLeague_DropDown"
+    }
+  }
+}
