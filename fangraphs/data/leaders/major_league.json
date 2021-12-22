@@ -1,0 +1,75 @@
+{
+  "selections": {
+    "group": {
+      "root": "#LeaderBoard1_tsGroup"
+    },
+    "stat": {
+      "root": "#LeaderBoard1_tsStats"
+    },
+    "position": {
+      "root": "#LeaderBoard1_tsPosition"
+    },
+    "table_type": {
+      "root": "#LeaderBoard1_tsType"
+    }
+  },
+  "dropdowns": {
+    "league": {
+      "root": "#LeaderBoard1_rcbLeague_Input",
+      "dropdown": "#LeaderBoard1_rcbLeague_DropDown"
+    },
+    "team": {
+      "root": "#LeaderBoard1_rcbTeam_Input",
+      "dropdown": "#LeaderBoard1_rcbTeam_DropDown"
+    },
+    "single_season": {
+      "root": "#LeaderBoard1_rcbSeason_Input",
+      "dropdown": "#LeaderBoard1_rcbSeason_DropDown"
+    },
+    "split": {
+      "root": "#LeaderBoard1_rcbMonth_Input",
+      "dropdown": "#LeaderBoard1_rcbMonth_DropDown"
+    },
+    "minimum": {
+      "root": "#LeaderBoard1_rcbMin_Input",
+      "dropdown": "#LeaderBoard1_rcbMin_DropDown"
+    },
+    "season1": {
+      "root": "#LeaderBoard1_rcbSeason1_Input",
+      "dropdown": "#LeaderBoard1_rcbSeason1_DropDown",
+      "button": "#LeaderBoard1_btnMSeason"
+    },
+    "season2": {
+      "root": "#LeaderBoard1_rcbSeason2_Input",
+      "dropdown": "#LeaderBoard1_rcbSeason2_DropDown",
+      "button": "#LeaderBoard1_btnMSeason"
+    },
+    "age1": {
+      "root": "#LeaderBoard1_rcbAge1_Input",
+      "dropdown": "#LeaderBoard1_rcbAge1_DropDown",
+      "button": "#LeaderBoard1_cmdAge"
+    },
+    "age2": {
+      "root": "#LeaderBoard1_rcbAge2_Input",
+      "dropdown": "#LeaderBoard1_rcbAge2_DropDown",
+      "button": "#LeaderBoard1_cmdAge"
+    }
+  },
+  "checkboxes": {
+    "split_teams": {
+      "root": "#LeaderBoard1_cbTeams"
+    },
+    "active_roster": {
+      "root": "#LeaderBoard1_cbActive"
+    },
+    "hof": {
+      "root": "#LeaderBoard1_cbHOF"
+    },
+    "split_season": {
+      "root": "#LeaderBoard1_cbSeason"
+    },
+    "rookies": {
+      "root": "#LeaderBoard1_cbRookie"
+    }
+  }
+}

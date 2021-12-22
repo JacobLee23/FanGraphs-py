@@ -18,12 +18,33 @@ from . import logger
 from . import selectors
 
 
+def load_soup(html: str) -> bs4.BeautifulSoup:
+    """
+
+    :param html:
+    :return:
+    """
+    return bs4.BeautifulSoup(html, features="lxml")
+
+
+def load_filter_queries(path) -> dict:
+    """
+    
+    :param path: 
+    :return: 
+    """
+    with open(path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
 class FanGraphsPage:
     """
 
     """
     address: str
+
     path: str
+    filter_queries: dict
 
     export_data_css: str = ""
 
@@ -46,8 +67,7 @@ class FanGraphsPage:
         """
         :param html:
         """
-        self.soup = self.load_soup(html)
-        self.filter_queries = self.load_filter_queries()
+        self.soup = load_soup(html)
 
         for qname, qclass in self._query_types.items():
             if (qdict := self.filter_queries.get(qname)) is not None:
@@ -55,23 +75,6 @@ class FanGraphsPage:
                     self.__setattr__(attr, qclass(self.soup, **kwargs))
 
         self.queries = self.compile_queries()
-
-    @staticmethod
-    def load_soup(html: str) -> bs4.BeautifulSoup:
-        """
-
-        :param html:
-        :return:
-        """
-        return bs4.BeautifulSoup(html, features="lxml")
-
-    def load_filter_queries(self) -> dict:
-        """
-
-        :return:
-        """
-        with open(self.path, "r", encoding="utf-8") as file:
-            return json.load(file)
 
     def compile_queries(self) -> dict[str, Any]:
         """
@@ -81,11 +84,11 @@ class FanGraphsPage:
 
         for qtype in list(self._query_types):
             if (qnames := self.filter_queries.get(qtype)) is not None:
-                logger.debug("Processing filter widget type: %s", qtype)
+                logger.debug("Processing filter query type: %s", qtype)
                 for name in qnames:
                     qclass = self.__dict__.get(name)
                     queries.update({name: qclass})
-                    logger.debug("Processed filter widget: %s (%s)", name, qclass)
+                    logger.debug("Processed filter query: %s (%s)", name, qclass)
 
         return queries
 
@@ -165,7 +168,10 @@ class FanGraphsPage:
         """
         return await self.aexport_data(page)
 
-    def scrape_table(self, table: bs4.Tag, *, css_h: str = "thead > tr", css_r: str = "tbody > tr") -> TableData:
+    def scrape_table(
+            self, table: bs4.Tag,
+            *, css_h: str = "thead > tr", css_r: str = "tbody > tr"
+    ) -> TableData:
         """
 
         :param table:
@@ -240,9 +246,9 @@ class SyncScraper:
         :param wname:
         :return:
         """
-        widget = self.fgpage.queries.get(wname)
-        if widget is not None:
-            return widget.options()
+        query = self.fgpage.queries.get(wname)
+        if query is not None:
+            return query.options()
         raise Exception  # TODO: Define custom exception
 
     def current(self, wname: str) -> Optional[Union[str, bool]]:

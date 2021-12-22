@@ -1,0 +1,80 @@
+{
+  "selections": {
+    "group": {
+      "root": [
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(1)",
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(2)",
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(3)",
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(4)"
+      ]
+    },
+    "stat": {
+      "root": [
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(6)",
+        ".fgBin.row-button > div.button-green.fgButton:nth-child(7)"
+      ]
+    },
+    "table": {
+      "root": [
+        "#root-buttons-stats > div.button-green.fgButton:nth-child(1)",
+        "#root-buttons-stats > div.button-green.fgButton:nth-child(2)",
+        "#root-buttons-stats > div.button-green.fgButton:nth-child(3)"
+      ]
+    }
+  },
+  "dropdowns": {
+    "time_filter": {
+      "root": "#root-menu-time-filter > .fg-dropdown.splits.multi-choice"
+    },
+    "preset_range": {
+      "root": "#root-menu-time-filter > .fg-dropdown.splits.single-choice"
+    },
+    "group_by": {
+      "root": ".fg-dropdown.group-by"
+    },
+    "handedness": {
+      "root": ".fgBin:nth-child(1) > .fg-dropdown.splits.multi-choice:nth-child(1)"
+    },
+    "home_away": {
+      "root": ".fgBin:nth-child(1) > .fg-dropdown.splits.multi-choice:nth-child(2)"
+    },
+    "batted_ball": {
+      "root": ".fgBin:nth-child(1) > .fg-dropdown.splits.multi-choice:nth-child(3)"
+    },
+    "situation": {
+      "root": ".fgBin:nth-child(1) > .fg-dropdown.splits.multi-choice:nth-child(4)"
+    },
+    "count": {
+      "root": ".fgBin:nth-child(1) > .fg-dropdown.splits.multi-choice:nth-child(5)"
+    },
+    "batting_order": {
+      "root": ".fgBin:nth-child(2) > .fg-dropdown.splits.multi-choice:nth-child(1)"
+    },
+    "position": {
+      "root": ".fgBin:nth-child(2) > .fg-dropdown.splits.multi-choice:nth-child(2)"
+    },
+    "inning": {
+      "root": ".fgBin:nth-child(2) > .fg-dropdown.splits.multi-choice:nth-child(3)"
+    },
+    "leverage": {
+      "root": ".fgBin:nth-child(2) > .fg-dropdown.splits.multi-choice:nth-child(4)"
+    },
+    "shifts": {
+      "root": ".fgBin:nth-child(2) > .fg-dropdown.splits.multi-choice:nth-child(5)"
+    },
+    "team": {
+      "root": ".fgBin:nth-child(3) > .fg-dropdown.splits.multi-choice:nth-child(1)"
+    },
+    "opponent": {
+      "root": ".fgBin:nth-child(3) > .fg-dropdown.splits.multi-choice:nth-child(2)"
+    }
+  },
+  "switches": {
+    "split_teams": {
+      "root": "#stack-buttons > div:nth-child(2)"
+    },
+    "auto_pt": {
+      "root": "#stack-buttons > div:nth-child(3)"
+    }
+  }
+}

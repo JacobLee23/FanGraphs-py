@@ -5,7 +5,7 @@
 
 """
 
-from typing import *
+from typing import Optional, Sequence, Union
 
 import bs4
 
@@ -111,12 +111,12 @@ class Selection(FilterWidget):
             root_elem = self.soup.select_one(self.root)
 
             if self.descendant == self._descendants[0]:
-                current = e.text if (
-                    e := root_elem.select_one(".rtsLink.rtsSelected")
+                current = elem.text if (
+                    elem := root_elem.select_one(".rtsLink.rtsSelected")
                 ) else ""
             elif self.descendant == self._descendants[1]:
-                elems = root_elem.select(self.descendant)
-                for elem in elems:
+                elements = root_elem.select(self.descendant)
+                for elem in elements:
                     if "active" in elem.attrs.get("class"):
                         current = elem.text
             elif self.descendant == self._descendants[2]:
@@ -145,12 +145,12 @@ class Selection(FilterWidget):
             root_elem = self.soup.select_one(self.root)
 
             if self.descendant == self._descendants[0]:
-                current = e.text if (
-                    e := root_elem.select_one(".rtsLink.rtsSelected")
+                current = elem.text if (
+                    elem := root_elem.select_one(".rtsLink.rtsSelected")
                 ) else ""
             elif self.descendant == self._descendants[1]:
-                elems = root_elem.select(self.descendant)
-                for elem in elems:
+                elements = root_elem.select(self.descendant)
+                for elem in elements:
                     if "active" in elem.attrs.get("class"):
                         current = elem.text
             elif self.descendant == self._descendants[2]:
@@ -181,8 +181,8 @@ class Selection(FilterWidget):
 
         if isinstance(self.root, str):
             root_elem = page.query_selector(self.root)
-            opt_elem = root_elem.query_selector_all(self.descendant)[index]
-            opt_elem.click()
+            option_elem = root_elem.query_selector_all(self.descendant)[index]
+            option_elem.click()
         else:
             page.click(self.root[index])
 
@@ -200,8 +200,8 @@ class Selection(FilterWidget):
 
         if isinstance(self.root, str):
             root_elem = await page.query_selector(self.root)
-            opt_elem = (await root_elem.query_selector_all(self.descendant))[index]
-            await opt_elem.click()
+            option_elem = (await root_elem.query_selector_all(self.descendant))[index]
+            await option_elem.click()
         else:
             await page.click(self.root[index])
 
@@ -244,8 +244,8 @@ class Dropdown(FilterWidget):
         else:
             root_elem = self.soup.select_one(self.root)
             for desc in self._descendants:
-                if elems := root_elem.select(desc):
-                    options = [e.text for e in elems]
+                if elements := root_elem.select(desc):
+                    options = [e.text for e in elements]
                     self.descendant = desc
 
         return tuple(options)
@@ -322,8 +322,8 @@ class Dropdown(FilterWidget):
             page.click(self.root)
 
             root_elem = page.query_selector(self.root)
-            opt_elem = root_elem.query_selector_all(self.descendant)[index]
-            opt_elem.click()
+            option_elem = root_elem.query_selector_all(self.descendant)[index]
+            option_elem.click()
 
             if self.button is not None:
                 page.click(self.button)
@@ -353,8 +353,8 @@ class Dropdown(FilterWidget):
             await page.click(self.root)
 
             root_elem = await page.query_selector(self.root)
-            opt_elem = (await root_elem.query_selector_all(self.descendant))[index]
-            await opt_elem.click()
+            option_elem = (await root_elem.query_selector_all(self.descendant))[index]
+            await option_elem.click()
 
             if self.button is not None:
                 await page.click(self.button)
@@ -489,4 +489,3 @@ class Switch(FilterWidget):
         """
         if option is not await self.acurrent(page):
             await page.click(self.root)
-

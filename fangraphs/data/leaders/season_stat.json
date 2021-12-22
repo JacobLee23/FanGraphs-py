@@ -1,0 +1,52 @@
+{
+  "selections": {
+    "stat": {
+      "root": [
+        "div[class*='fgButton button-green']:nth-child(1)",
+        "div[class*='fgButton button-green']:nth-child(2)"
+      ]
+    },
+    "table": {
+      "root": [
+        "div[class*='fgButton button-green']:nth-child(4)",
+        "div[class*='fgButton button-green']:nth-child(5)",
+        "div[class*='fgButton button-green']:nth-child(6)"
+      ]
+    }
+  },
+  "dropdowns": {
+    "start_season": {
+      "root": ".row-season > div:nth-child(2)"
+    },
+    "end_season": {
+      "root": ".row-season > div:nth-child(4)"
+    },
+    "popular": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(1)"
+    },
+    "standard": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(2)"
+    },
+    "advanced": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(3)"
+    },
+    "statcast": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(4)"
+    },
+    "batted_ball": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(5)"
+    },
+    "win_probability": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(6)"
+    },
+    "pitch_type": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(7)"
+    },
+    "plate_discipline": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(8)"
+    },
+    "value": {
+      "root": ".season-grid-controls-dropdown-row-stats > div:nth-child(9)"
+    }
+  }
+}

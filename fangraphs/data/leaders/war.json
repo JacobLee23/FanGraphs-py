@@ -1,0 +1,16 @@
+{
+  "dropdowns": {
+    "season": {
+      "root": "#WARBoard1_rcbSeason_Input",
+      "dropdown": "#WARBoard1_rcbSeason_Input"
+    },
+    "team": {
+      "root": "#WARBoard1_rcbTeam_Input",
+      "dropdown": "#WARBoard1_rcbTeam_DropDown"
+    },
+    "table_type": {
+      "root": "#WARBoard1_rcbType_Input",
+      "dropdown": "#WARBoard1_rcbType_DropDown"
+    }
+  }
+}
