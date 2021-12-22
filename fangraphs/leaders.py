@@ -66,8 +66,7 @@ class International(FanGraphsPage):
     def __revise_names(name: str) -> str:
         if (match := re.search(r"^([A-Za-z\-]+)", name)) is not None:
             return match.group(1)
-        else:
-            return name
+        return name
 
     def data(self, page) -> pd.DataFrame:
         dataframe = self.export_data(page)

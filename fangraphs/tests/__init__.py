@@ -43,7 +43,8 @@ class BaseTests:
 
         :param address:
         """
-        assert urlopen(address).code == 200
+        with urlopen(address) as res:
+            assert res.code == 200
 
     @staticmethod
     def test_path(path: str) -> None:
