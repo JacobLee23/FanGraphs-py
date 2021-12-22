@@ -5,8 +5,10 @@
 
 """
 
-import os
+import inspect
 import json
+import os
+from typing import *
 from urllib.request import urlopen
 
 import bs4
@@ -18,25 +20,37 @@ QTYPES = (
 )
 
 
-def get_soup(address: str) -> bs4.BeautifulSoup:
+def get_classes(module) -> tuple[Any]:
     """
 
-    :param address:
+    :param module:
     :return:
     """
-    with sync_playwright() as play:
-        browser = play.chromium.launch()
-        page = browser.new_page()
-        page.goto(address, timeout=0)
-        soup = bs4.BeautifulSoup(page.content(), features="lxml")
-        browser.close()
-    return soup
+    return tuple(
+        cls for name, cls in inspect.getmembers(module, inspect.isclass)
+        if name != "FanGraphsPage"
+    )
 
 
 class BaseTests:
     """
 
     """
+    @staticmethod
+    def get_soup(address: str) -> bs4.BeautifulSoup:
+        """
+
+        :param address:
+        :return:
+        """
+        with sync_playwright() as play:
+            browser = play.chromium.launch()
+            page = browser.new_page()
+            page.goto(address, timeout=0)
+            soup = bs4.BeautifulSoup(page.content(), features="lxml")
+            browser.close()
+        return soup
+
     @staticmethod
     def test_address(address: str) -> None:
         """

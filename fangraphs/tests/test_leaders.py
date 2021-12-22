@@ -5,18 +5,14 @@
 
 """
 
-import inspect
-
 import pytest
 
 from . import BaseTests
-from . import get_soup
+from . import get_classes
 from .. import leaders
 
 
-CLASSES = tuple(
-    cls for name, cls in inspect.getmembers(leaders, inspect.isclass) if name != "FanGraphsPage"
-)
+CLASSES = get_classes(leaders)
 
 
 @pytest.mark.parametrize(
@@ -60,7 +56,7 @@ def test_filter_queries(cls) -> None:
 
     :param cls:
     """
-    soup = get_soup(cls.address)
+    soup = BaseTests.get_soup(cls.address)
 
     for qtypedict in cls.filter_queries.values():
         for querydict in qtypedict.values():
