@@ -51,7 +51,6 @@ class BaseTests:
         """
         with open(data_file_path(filename), "r", encoding="utf-8") as file:
             data = json.load(file)
-        assert data
 
         assert isinstance(data, dict)
         assert all(k in QTYPES for k in data)

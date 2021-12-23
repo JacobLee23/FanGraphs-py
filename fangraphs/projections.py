@@ -5,15 +5,10 @@
 
 """
 
-import os
-
 import pandas as pd
 
 from .scraper import FanGraphsPage
 from .scraper import load_filter_queries
-
-
-PATH = os.path.join("fangraphs", "data", "projections")
 
 
 class Projections(FanGraphsPage):
