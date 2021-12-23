@@ -34,10 +34,9 @@ def load_filter_queries(filename: str) -> Optional[dict]:
     :param filename:
     :return: 
     """
-    if (path := data_file_path(filename)) is None:
-        return
+    path = data_file_path(filename)
+    logger.debug("Reading filter queries from %s", path)
 
-    logger.debug("Reading filter queries from %s", filename)
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 

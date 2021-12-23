@@ -11,7 +11,7 @@ from typing import Optional
 from .. import logger
 
 
-def data_file_path(filename: str) -> Optional[str]:
+def data_file_path(filename: str) -> str:
     """
 
     :param filename:
@@ -23,7 +23,7 @@ def data_file_path(filename: str) -> Optional[str]:
         os.path.join(r, file)
         for r, d, f in os.walk(os.path.join("fangraphs", "data"))
         for file in f
-        if f == filename
+        if file == filename
     )
     logger.debug("Found %s at %s", filename, path)
 
