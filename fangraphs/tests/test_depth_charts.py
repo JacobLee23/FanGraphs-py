@@ -1,5 +1,5 @@
 #! usr/bin/env python
-# fangraphs/tests/test_projections.py
+# fangraphs/tests/test_depth_charts.py
 
 """
 
@@ -8,11 +8,24 @@
 import pytest
 
 from . import BaseTests
-from .. import projections
+from .. import depth_charts
 
 
 CLASSES = (
-    projections.Projections,
+    depth_charts.Standings,
+    depth_charts.BaseRuns,
+    depth_charts.DepthCharts,
+    depth_charts.PC,
+    depth_charts.P1B,
+    depth_charts.P2B,
+    depth_charts.PSS,
+    depth_charts.P3B,
+    depth_charts.PLF,
+    depth_charts.PCF,
+    depth_charts.PRF,
+    depth_charts.PSP,
+    depth_charts.PRP,
+    depth_charts.Totals
 )
 
 

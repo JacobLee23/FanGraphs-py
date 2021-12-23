@@ -9,42 +9,48 @@ import json
 import os
 from urllib.request import urlopen
 
+from ..data import data_file_path
+
 
 QTYPES = (
     "selections", "dropdowns", "checkboxes", "switches"
 )
 
 
-class Runner:
+class BaseTests:
     """
-    
-    """
-    def __init__(self, fgpage):
-        """
-        :param fgpage:
-        """
-        self.fgpage = fgpage
 
-    def test_address(self) -> None:
+    """
+    @staticmethod
+    def test_address(address: str) -> None:
         """
-        
+
+        :param address:
         """
-        with urlopen(self.fgpage.address) as res:
+        with urlopen(address) as res:
             assert res.code == 200
-            
-    def test_path(self) -> None:
-        """
-        
-        """
-        assert os.path.exists(self.fgpage.path)
 
-    def test_file_contents(self) -> None:
+    @staticmethod
+    def test_filename(filename: str) -> None:
         """
 
+        :param filename:
         """
-        with open(self.fgpage.path, "r", encoding="utf-8") as file:
+        assert len(paths := [
+            os.path.join(r, file)
+            for r, d, f in os.walk(os.path.join("fangraphs", "data"))
+            for file in f
+            if file == filename
+        ]) == 1, paths
+
+    @staticmethod
+    def test_file_contents(filename: str) -> None:
+        """
+
+        :param filename:
+        """
+        with open(data_file_path(filename), "r", encoding="utf-8") as file:
             data = json.load(file)
-        assert data
 
         assert isinstance(data, dict)
         assert all(k in QTYPES for k in data)

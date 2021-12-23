@@ -16,6 +16,7 @@ from playwright.sync_api import sync_playwright
 
 from . import logger
 from . import selectors
+from .data import data_file_path
 
 
 def load_soup(html: str) -> bs4.BeautifulSoup:
@@ -27,12 +28,15 @@ def load_soup(html: str) -> bs4.BeautifulSoup:
     return bs4.BeautifulSoup(html, features="lxml")
 
 
-def load_filter_queries(path) -> dict:
+def load_filter_queries(filename: str) -> dict:
     """
-    
-    :param path: 
-    :return: 
+
+    :param filename:
+    :return:
     """
+    path = data_file_path(filename)
+    logger.debug("Reading filter queries from %s", path)
+
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
@@ -43,7 +47,7 @@ class FanGraphsPage:
     """
     address: str
 
-    path: str
+    filename: str
     filter_queries: dict
 
     export_data_css: str = ""
@@ -69,8 +73,9 @@ class FanGraphsPage:
         """
         self.soup = load_soup(html)
 
-        for qname, qclass in self._query_types.items():
-            if (qdict := self.filter_queries.get(qname)) is not None:
+        for qtype, qclass in self._query_types.items():
+            logger.debug("Processing filter query type: %s", qtype)
+            if (qdict := self.filter_queries.get(qtype)) is not None:
                 for attr, kwargs in qdict.items():
                     self.__setattr__(attr, qclass(self.soup, **kwargs))
 
@@ -82,13 +87,13 @@ class FanGraphsPage:
         """
         queries = {}
 
+        logger.debug("Compiling dictionary of filter queries")
         for qtype in list(self._query_types):
+            logger.debug("Compiling filter queries of type %s", qtype)
             if (qnames := self.filter_queries.get(qtype)) is not None:
-                logger.debug("Processing filter query type: %s", qtype)
                 for name in qnames:
                     qclass = self.__dict__.get(name)
                     queries.update({name: qclass})
-                    logger.debug("Processed filter query: %s (%s)", name, qclass)
 
         return queries
 
@@ -101,8 +106,7 @@ class FanGraphsPage:
         if page.query_selector_all("#ezmob-wrapper > div[style='display: none;']"):
             return
 
-        elem = page.query_selector(".ezmob-footer-close")
-        if elem:
+        if elem := page.query_selector(".ezmob-footer-close"):
             elem.click()
 
     @staticmethod
@@ -114,8 +118,7 @@ class FanGraphsPage:
         if await page.query_selector_all("#ezmob-wrapper > div[style='display: none;']"):
             return
 
-        elem = await page.query_selector(".ezmob-footer-close")
-        if elem:
+        if elem := await page.query_selector(".ezmob-footer-close"):
             await elem.click()
 
     def export_data(self, page) -> pd.DataFrame:
@@ -130,8 +133,13 @@ class FanGraphsPage:
 
         download = down_info.value
         download_path = download.path()
+        logger.debug("Table data downloaded to %s", download_path)
+
         dataframe = pd.read_csv(download_path)
+        logger.debug("Created DataFrame from table data")
+
         os.remove(download_path)
+        logger.debug("Removed table data CSV from %s", download_path)
 
         return dataframe
 
@@ -147,8 +155,13 @@ class FanGraphsPage:
 
         download = await down_info.value
         download_path = await download.path()
+        logger.debug("Table data downloaded to %s", download_path)
+
         dataframe = pd.read_csv(download_path)
+        logger.debug("Created DataFrame from table data")
+
         os.remove(download_path)
+        logger.debug("Removed table data CSV from %s", download_path)
 
         return dataframe
 

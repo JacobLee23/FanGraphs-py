@@ -6,7 +6,6 @@
 """
 
 import datetime
-import os
 import re
 
 import numpy as np
@@ -16,17 +15,14 @@ from .scraper import FanGraphsPage
 from .scraper import load_filter_queries
 
 
-PATH = os.path.join("fangraphs", "data", "leaders")
-
-
 class GameSpan(FanGraphsPage):
     """
 
     """
     address = "https://fangraphs.com/leaders/special/60-game-span"
 
-    path = os.path.join(PATH, "game_span.json")
-    filter_queries = load_filter_queries(path)
+    filename = "game_span.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = ".data-export"
 
@@ -57,8 +53,8 @@ class International(FanGraphsPage):
     """
     address = "https://fangraphs.com/leaders/international"
 
-    path = os.path.join(PATH, "international.json")
-    filter_queries = load_filter_queries(path)
+    filename = "international.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = ".data-export"
 
@@ -89,8 +85,8 @@ class MajorLeague(FanGraphsPage):
     """
     address = "https://fangraphs.com/leaders.aspx"
 
-    path = os.path.join(PATH, "major_league.json")
-    filter_queries = load_filter_queries(path)
+    filename = "major_league.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = "#LeaderBoard1_cmdCSV"
 
@@ -101,8 +97,8 @@ class SeasonStat(FanGraphsPage):
     """
     address = "https://fangraphs.com/leaders/season-stat-grid"
 
-    path = os.path.join(PATH, "season_stat.json")
-    filter_queries = load_filter_queries(path)
+    filename = "season_stat.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = ".page-item-control > select"
 
@@ -126,8 +122,8 @@ class Splits(FanGraphsPage):
     """
     address = "https://fangraphs.com/leaders/splits-leaderboards"
 
-    path = os.path.join(PATH, "splits.json")
-    filter_queries = load_filter_queries(path)
+    filename = "splits.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = ".data-export"
 
@@ -138,7 +134,7 @@ class WAR(FanGraphsPage):
     """
     address = "https://www.fangraphs.com/warleaders.aspx"
 
-    path = os.path.join(PATH, "war.json")
-    filter_queries = load_filter_queries(path)
+    filename = "war.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = "#WARBoard1_cmdCSV"

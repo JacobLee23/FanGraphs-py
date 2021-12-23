@@ -5,15 +5,10 @@
 
 """
 
-import os
-
 import pandas as pd
 
 from .scraper import FanGraphsPage
 from .scraper import load_filter_queries
-
-
-PATH = os.path.join("fangraphs", "data", "projections")
 
 
 class Projections(FanGraphsPage):
@@ -22,8 +17,8 @@ class Projections(FanGraphsPage):
     """
     address = "https://fangraphs.com/projections.aspx"
 
-    path = os.path.join(PATH, "projections.json")
-    filter_queries = load_filter_queries(path)
+    filename = "projections.json"
+    filter_queries = load_filter_queries(filename)
 
     export_data_css = "#ProjectionBoard1_cmdCSV"
 

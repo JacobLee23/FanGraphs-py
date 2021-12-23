@@ -7,26 +7,48 @@
 
 import pytest
 
-from . import Runner
+from . import BaseTests
 from .. import leaders
 
 
-@pytest.mark.parametrize(
-    "fgpage", (
-        leaders.GameSpan,
-        leaders.International,
-        leaders.MajorLeague,
-        leaders.SeasonStat,
-        leaders.Splits,
-        leaders.WAR
-    )
+CLASSES = (
+    leaders.GameSpan,
+    leaders.International,
+    leaders.MajorLeague,
+    leaders.SeasonStat,
+    leaders.Splits,
+    leaders.WAR
 )
-def test_scraper(fgpage) -> None:
+
+
+@pytest.mark.parametrize(
+    "fgpage", CLASSES
+)
+def test_address(fgpage) -> None:
     """
 
     :param fgpage:
     """
-    test_runner = Runner(fgpage)
-    test_runner.test_address()
-    test_runner.test_path()
-    test_runner.test_file_contents()
+    BaseTests.test_address(fgpage.address)
+
+
+@pytest.mark.parametrize(
+    "fgpage", CLASSES
+)
+def test_filename(fgpage) -> None:
+    """
+
+    :param fgpage:
+    """
+    BaseTests.test_filename(fgpage.filename)
+
+
+@pytest.mark.parametrize(
+    "fgpage", CLASSES
+)
+def test_file_contents(fgpage) -> None:
+    """
+
+    :param fgpage:
+    """
+    BaseTests.test_file_contents(fgpage.filename)
