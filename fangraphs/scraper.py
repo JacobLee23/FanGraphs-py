@@ -16,6 +16,7 @@ from playwright.sync_api import sync_playwright
 
 from . import logger
 from . import selectors
+from .data import data_file_path
 
 
 def load_soup(html: str) -> bs4.BeautifulSoup:
@@ -27,12 +28,15 @@ def load_soup(html: str) -> bs4.BeautifulSoup:
     return bs4.BeautifulSoup(html, features="lxml")
 
 
-def load_filter_queries(path) -> dict:
+def load_filter_queries(filename: str) -> Optional[dict]:
     """
     
-    :param path: 
+    :param filename:
     :return: 
     """
+    if (path := data_file_path(filename)) is None:
+        return
+
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
@@ -43,7 +47,7 @@ class FanGraphsPage:
     """
     address: str
 
-    path: str
+    filename: str
     filter_queries: dict
 
     export_data_css: str = ""
