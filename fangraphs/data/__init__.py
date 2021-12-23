@@ -19,10 +19,12 @@ def data_file_path(filename: str) -> Optional[str]:
     """
     logger.debug("Searching for %s", filename)
 
-    for root, directories, files in os.walk(os.path.join("fangraphs", "data")):
-        for file in files:
-            if file == filename:
-                path = os.path.join(root, file)
-                logger.debug("Found %s at %s", filename, path)
+    path = next(
+        os.path.join(r, file)
+        for r, d, f in os.walk(os.path.join("fangraphs", "data"))
+        for file in f
+        if f == filename
+    )
+    logger.debug("Found %s at %s", filename, path)
 
-                return path
+    return path
