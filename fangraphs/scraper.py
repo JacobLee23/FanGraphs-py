@@ -28,11 +28,11 @@ def load_soup(html: str) -> bs4.BeautifulSoup:
     return bs4.BeautifulSoup(html, features="lxml")
 
 
-def load_filter_queries(filename: str) -> Optional[dict]:
+def load_filter_queries(filename: str) -> dict:
     """
-    
+
     :param filename:
-    :return: 
+    :return:
     """
     path = data_file_path(filename)
     logger.debug("Reading filter queries from %s", path)

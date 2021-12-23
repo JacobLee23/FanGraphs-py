@@ -145,7 +145,7 @@ async def adata(table_names: list[str], table_elems) -> dict[str, pd.DataFrame]:
     return dfdict
 
 
-class __Position(FanGraphsPage):
+class _Position(FanGraphsPage):
     """
 
     """
@@ -210,7 +210,7 @@ class BaseRuns(FanGraphsPage):
         return await adata(table_names, table_elems)
 
 
-class DepthCharts(__Position):
+class DepthCharts(_Position):
     """
 
     """
@@ -222,7 +222,7 @@ class DepthCharts(__Position):
     export_data_css = ""
 
 
-class PC(__Position):
+class PC(_Position):
     """
 
     """
@@ -234,7 +234,7 @@ class PC(__Position):
     export_data_css = ""
 
 
-class P1B(__Position):
+class P1B(_Position):
     """
 
     """
@@ -246,7 +246,7 @@ class P1B(__Position):
     export_data_css = ""
 
 
-class P2B(__Position):
+class P2B(_Position):
     """
 
     """
@@ -258,7 +258,7 @@ class P2B(__Position):
     export_data_css = ""
 
 
-class PSS(__Position):
+class PSS(_Position):
     """
 
     """
@@ -270,7 +270,7 @@ class PSS(__Position):
     export_data_css = ""
 
 
-class P3B(__Position):
+class P3B(_Position):
     """
 
     """
@@ -282,7 +282,7 @@ class P3B(__Position):
     export_data_css = ""
 
 
-class PLF(__Position):
+class PLF(_Position):
     """
 
     """
@@ -294,7 +294,7 @@ class PLF(__Position):
     export_data_css = ""
 
 
-class PCF(__Position):
+class PCF(_Position):
     """
 
     """
@@ -306,7 +306,7 @@ class PCF(__Position):
     export_data_css = ""
 
 
-class PRF(__Position):
+class PRF(_Position):
     """
 
     """
@@ -318,7 +318,7 @@ class PRF(__Position):
     export_data_css = ""
 
 
-class PSP(__Position):
+class PSP(_Position):
     """
 
     """
@@ -330,7 +330,7 @@ class PSP(__Position):
     export_data_css = ""
 
 
-class PRP(__Position):
+class PRP(_Position):
     """
 
     """
@@ -342,7 +342,7 @@ class PRP(__Position):
     export_data_css = ""
 
 
-class PDH(__Position):
+class PDH(_Position):
     """
 
     """

@@ -19,7 +19,7 @@ QTYPES = (
 
 class BaseTests:
     """
-    
+
     """
     @staticmethod
     def test_address(address: str) -> None:

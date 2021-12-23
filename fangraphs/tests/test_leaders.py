@@ -11,15 +11,18 @@ from . import BaseTests
 from .. import leaders
 
 
+CLASSES = (
+    leaders.GameSpan,
+    leaders.International,
+    leaders.MajorLeague,
+    leaders.SeasonStat,
+    leaders.Splits,
+    leaders.WAR
+)
+
+
 @pytest.mark.parametrize(
-    "fgpage", (
-        leaders.GameSpan,
-        leaders.International,
-        leaders.MajorLeague,
-        leaders.SeasonStat,
-        leaders.Splits,
-        leaders.WAR
-    )
+    "fgpage", CLASSES
 )
 def test_address(fgpage) -> None:
     """
@@ -30,14 +33,7 @@ def test_address(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        leaders.GameSpan,
-        leaders.International,
-        leaders.MajorLeague,
-        leaders.SeasonStat,
-        leaders.Splits,
-        leaders.WAR
-    )
+    "fgpage", CLASSES
 )
 def test_filename(fgpage) -> None:
     """
@@ -48,14 +44,7 @@ def test_filename(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        leaders.GameSpan,
-        leaders.International,
-        leaders.MajorLeague,
-        leaders.SeasonStat,
-        leaders.Splits,
-        leaders.WAR
-    )
+    "fgpage", CLASSES
 )
 def test_file_contents(fgpage) -> None:
     """

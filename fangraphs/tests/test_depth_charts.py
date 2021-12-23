@@ -11,23 +11,26 @@ from . import BaseTests
 from .. import depth_charts
 
 
+CLASSES = (
+    depth_charts.Standings,
+    depth_charts.BaseRuns,
+    depth_charts.DepthCharts,
+    depth_charts.PC,
+    depth_charts.P1B,
+    depth_charts.P2B,
+    depth_charts.PSS,
+    depth_charts.P3B,
+    depth_charts.PLF,
+    depth_charts.PCF,
+    depth_charts.PRF,
+    depth_charts.PSP,
+    depth_charts.PRP,
+    depth_charts.Totals
+)
+
+
 @pytest.mark.parametrize(
-    "fgpage", (
-        depth_charts.Standings,
-        depth_charts.BaseRuns,
-        depth_charts.DepthCharts,
-        depth_charts.PC,
-        depth_charts.P1B,
-        depth_charts.P2B,
-        depth_charts.PSS,
-        depth_charts.P3B,
-        depth_charts.PLF,
-        depth_charts.PCF,
-        depth_charts.PRF,
-        depth_charts.PSP,
-        depth_charts.PRP,
-        depth_charts.Totals
-    )
+    "fgpage", CLASSES
 )
 def test_address(fgpage) -> None:
     """
@@ -38,22 +41,7 @@ def test_address(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        depth_charts.Standings,
-        depth_charts.BaseRuns,
-        depth_charts.DepthCharts,
-        depth_charts.PC,
-        depth_charts.P1B,
-        depth_charts.P2B,
-        depth_charts.PSS,
-        depth_charts.P3B,
-        depth_charts.PLF,
-        depth_charts.PCF,
-        depth_charts.PRF,
-        depth_charts.PSP,
-        depth_charts.PRP,
-        depth_charts.Totals
-    )
+    "fgpage", CLASSES
 )
 def test_filename(fgpage) -> None:
     """
@@ -64,22 +52,7 @@ def test_filename(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        depth_charts.Standings,
-        depth_charts.BaseRuns,
-        depth_charts.DepthCharts,
-        depth_charts.PC,
-        depth_charts.P1B,
-        depth_charts.P2B,
-        depth_charts.PSS,
-        depth_charts.P3B,
-        depth_charts.PLF,
-        depth_charts.PCF,
-        depth_charts.PRF,
-        depth_charts.PSP,
-        depth_charts.PRP,
-        depth_charts.Totals
-    )
+    "fgpage", CLASSES
 )
 def test_file_contents(fgpage) -> None:
     """
@@ -87,4 +60,3 @@ def test_file_contents(fgpage) -> None:
     :param fgpage:
     """
     BaseTests.test_file_contents(fgpage.filename)
-

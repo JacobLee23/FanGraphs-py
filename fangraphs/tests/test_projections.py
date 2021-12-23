@@ -11,10 +11,13 @@ from . import BaseTests
 from .. import projections
 
 
+CLASSES = (
+    projections.Projections,
+)
+
+
 @pytest.mark.parametrize(
-    "fgpage", (
-        projections.Projections,
-    )
+    "fgpage", CLASSES
 )
 def test_address(fgpage) -> None:
     """
@@ -25,9 +28,7 @@ def test_address(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        projections.Projections,
-    )
+    "fgpage", CLASSES
 )
 def test_filename(fgpage) -> None:
     """
@@ -38,9 +39,7 @@ def test_filename(fgpage) -> None:
 
 
 @pytest.mark.parametrize(
-    "fgpage", (
-        projections.Projections,
-    )
+    "fgpage", CLASSES
 )
 def test_file_contents(fgpage) -> None:
     """
