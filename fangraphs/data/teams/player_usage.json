@@ -1,0 +1,18 @@
+{
+  "selections": {
+    "mode": {
+      "root": "#root-team-lineup > div > div:nth-child(1)"
+    },
+    "handedness": {
+      "root": "#root-team-lineup > div > div:nth-child(2)"
+    }
+  },
+  "dropdowns": {
+    "team": {
+      "root": "div.team-select-change > select.select-change-team"
+    },
+    "season": {
+      "root": "#root-team-lineup > div > div:nth-child(3)"
+    }
+  }
+}
