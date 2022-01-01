@@ -13,6 +13,7 @@ import bs4
 import pandas as pd
 import numpy as np
 
+from . import RegEx
 from .scraper import FanGraphsPage
 from .scraper import load_filter_queries
 
@@ -98,12 +99,12 @@ def _scrape_depth_chart(soup: bs4.BeautifulSoup) -> _TeamDepthChart:
             if not all(e.text for e in elems):
                 continue
             try:
-                player_id = re.search(
-                    r"playerid=(.*)", elems[0].select_one("a").attrs.get("xlink:href")
+                playerid = RegEx.playerid.search(
+                    elems[0].select_one("a").attrs.get("xlink:href")
                 ).group(1)
             except AttributeError:
-                player_id = None
-            players.append([elems[0].text, elems[1].text, player_id])
+                playerid = None
+            players.append([elems[0].text, elems[1].text, playerid])
 
         dataframe = pd.DataFrame(
             data=players, columns=["Name", "Stat", "PlayerID"]
@@ -126,8 +127,7 @@ def _playerid_positions(rows: bs4.ResultSet, *, css: str = "td", attr: str = "hr
     """
     for row in rows:
         try:
-            yield re.search(
-                r"playerid=(.*)&position=(.*)",
+            yield RegEx.playerid_position.search(
                 row.select_one(css).select_one("a").attrs.get(attr)
             ).groups()
         except AttributeError:
@@ -146,8 +146,7 @@ def _playerid(rows: bs4.ResultSet, *, css: str = "td", attr: str = "href") -> Ge
     """
     for row in rows:
         try:
-            yield re.search(
-                r"playerid=(.*)",
+            yield RegEx.playerid.search(
                 row.select_one(css).select_one("a").attrs.get(attr)
             ).group(1)
         except AttributeError:
@@ -459,8 +458,7 @@ class PlayerUsage(FanGraphsPage):
         for i_ind, row in enumerate(table_data.row_elems):
             for i_col, elem in enumerate(row.select("td")[2:]):
                 playerids_df.iloc[i_ind, i_col] = int(
-                    re.search(
-                        r"playerid=(.*)",
+                    RegEx.playerid.search(
                         elem.select_one("a").attrs.get("href")
                     ).group(1)
                 )
