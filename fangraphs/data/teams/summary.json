@@ -1,0 +1,13 @@
+{
+  "dropdowns": {
+    "team": {
+      "root": "div.team-select-change > select.select-change-team"
+    },
+    "position_players": {
+      "root": "div.depth-chart-select > div:nth-child(2) > select"
+    },
+    "pitchers": {
+      "root": "div.depth-chart-select > div:nth-child(3) > select"
+    }
+  }
+}

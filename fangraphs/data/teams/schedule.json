@@ -1,0 +1,10 @@
+{
+  "dropdowns": {
+    "team": {
+      "root": "div.team-select-change > select.select-change-team"
+    },
+    "season": {
+      "root": "div.team-schedule-select-year > select"
+    }
+  }
+}

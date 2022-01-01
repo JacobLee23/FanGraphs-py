@@ -1,0 +1,13 @@
+{
+  "dropdowns": {
+    "team": {
+      "root": "div.team-select-change > select.select-change-team"
+    },
+    "team_select": {
+      "root": ".team-stats-select-team > select"
+    },
+    "season": {
+      "root": ".team-stats-select-year > select"
+    }
+  }
+}
