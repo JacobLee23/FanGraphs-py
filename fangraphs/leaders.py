@@ -26,25 +26,30 @@ class GameSpan(FanGraphsPage):
 
     export_data_css = ".data-export"
 
-    @staticmethod
-    def __revise_dates(date: str, dt_format="%Y-%m-%dT%X") -> datetime.datetime:
-        return datetime.datetime.strptime(date, dt_format)
+    _dt_format = "%Y-%m-%dT%X"
+
+    def __data(self, raw: pd.DataFrame) -> pd.DataFrame:
+        """
+
+        :param raw:
+        :return:
+        """
+        dataframe = raw.copy()
+
+        dataframe["Start Date"] = dataframe["Start Date"].map(
+            lambda d: datetime.datetime.strptime(d, self._dt_format)
+        )
+        dataframe["End Date"] = dataframe["End Date"].map(
+            lambda d: datetime.datetime.strptime(d, self._dt_format)
+        )
+
+        return dataframe
 
     def data(self, page) -> pd.DataFrame:
-        dataframe = self.export_data(page)
-
-        dataframe["Start Date"] = dataframe["Start Date"].map(self.__revise_dates)
-        dataframe["End Date"] = dataframe["End Date"].map(self.__revise_dates)
-
-        return dataframe
+        return self.__data(self.export_data(page))
 
     async def adata(self, page) -> pd.DataFrame:
-        dataframe = await self.export_data(page)
-
-        dataframe["Start Date"] = dataframe["Start Date"].map(self.__revise_dates)
-        dataframe["End Date"] = dataframe["End Date"].map(self.__revise_dates)
-
-        return dataframe
+        return self.__data(await self.export_data(page))
 
 
 class International(FanGraphsPage):
@@ -58,25 +63,22 @@ class International(FanGraphsPage):
 
     export_data_css = ".data-export"
 
-    @staticmethod
-    def __revise_names(name: str) -> str:
-        if (match := re.search(r"^([A-Za-z\-]+)", name)) is not None:
-            return match.group(1)
-        return name
+    _regex = re.compile(r"^([A-Za-z\-]+)")
+
+    def __data(self, raw: pd.DataFrame) -> pd.DataFrame:
+        dataframe = raw.copy()
+
+        dataframe["Name"] = dataframe["Name"].map(
+            lambda n: m.group(1) if (m := self._regex.search(n)) is not None else n
+        )
+
+        return dataframe
 
     def data(self, page) -> pd.DataFrame:
-        dataframe = self.export_data(page)
-
-        dataframe["Name"] = dataframe["Name"].map(self.__revise_names)
-
-        return dataframe
+        return self.__data(self.export_data(page))
 
     async def adata(self, page) -> pd.DataFrame:
-        dataframe = await self.export_data(page)
-
-        dataframe["Name"] = dataframe["Name"].map(self.__revise_names)
-
-        return dataframe
+        return self.__data(await self.export_data(page))
 
 
 class MajorLeague(FanGraphsPage):
@@ -102,7 +104,11 @@ class SeasonStat(FanGraphsPage):
 
     export_data_css = ".page-item-control > select"
 
-    def data(self, page) -> pd.DataFrame:
+    def __data(self) -> pd.DataFrame:
+        """
+
+        :return:
+        """
         table = self.soup.select_one(".table-scroll")
         table_data = self.scrape_table(table)
 
@@ -112,8 +118,11 @@ class SeasonStat(FanGraphsPage):
 
         return dataframe
 
+    def data(self, page) -> pd.DataFrame:
+        return self.__data()
+
     async def adata(self, page) -> pd.DataFrame:
-        return self.data(page)
+        return self.__data()
 
 
 class Splits(FanGraphsPage):
