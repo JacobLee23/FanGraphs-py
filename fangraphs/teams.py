@@ -191,7 +191,6 @@ class Summary(FanGraphsPage):
                 columns=["PlayerID", "Position"]
             )
         )
-        breakpoint()
         dataframe = dataframe.apply(np.roll, shift=1)
 
         return dataframe
@@ -346,14 +345,6 @@ class Schedule(FanGraphsPage):
     filter_queries = load_filter_queries(filename)
 
     export_data_css = ""
-
-    @staticmethod
-    def __revise_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-        index = [
-            df.columns[3], df.columns[5], df.columns[6]
-        ]
-        df[index] = df[index].replace("", np.NaN)
-        return df
 
     def __data(self) -> pd.DataFrame:
         """
@@ -515,10 +506,10 @@ class DepthChart(FanGraphsPage):
         :return:
         """
         for pos_elem in self.soup.select(css):
+            position = pos_elem.select_one("div.team-depth-table-pos.team-color-primary").text
+
             table = pos_elem.select_one("div.team-stats-table > div.outer > div.inner > table")
-            tname = "p_{}".format(
-                pos_elem.select_one("div.team-depth-table-pos.team-color-primary").text
-            )
+            tname = f"p_{position}"
 
             table_data = self.scrape_table(
                 table, css_h="tbody > tr:first-child", css_r="tbody > tr:not(tr:first-child)"
