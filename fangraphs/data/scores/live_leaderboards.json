@@ -1,0 +1,13 @@
+{
+  "selections": {
+    "player_type": {
+      "root": ".playertypes"
+    },
+    "positions": {
+      "root": ".positions"
+    },
+    "stat": {
+      "root": ".stattypes"
+    }
+  }
+}

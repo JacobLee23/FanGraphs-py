@@ -1,0 +1,8 @@
+{
+  "dropdowns": {
+    "season": {
+      "root": "#WinsBoard1_rcbSeason",
+      "dropdown": "#WinsBoard1_rcbSeason_DropDown"
+    }
+  }
+}

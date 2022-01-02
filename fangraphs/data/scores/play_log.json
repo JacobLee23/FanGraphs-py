@@ -1,0 +1,12 @@
+{
+  "dropdowns": {
+    "season": {
+      "root": "#PlayGame1_rcbSeason",
+      "dropdown": "#PlayGame1_rcbSeason_DropDown"
+    },
+    "team": {
+      "root": "#PlayGame1_cbTeams",
+      "dropdown": "#PlayGame1_cbTeams_DropDown"
+    }
+  }
+}
